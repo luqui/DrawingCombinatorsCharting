@@ -6,6 +6,7 @@ import Data.Monoid
 import Graphics.DrawingCombinators ((%%))
 import qualified Graphics.DrawingCombinators as Draw
 import qualified Graphics.UI.GLFW as GLFW -- Note: this is GLFW-b
+import qualified Graphics.Rendering.OpenGL.GL as GL
 
 import System.Environment(getArgs)
 import System.Exit
@@ -75,6 +76,9 @@ setupHandlers appStateTVar = do
     GLFW.setWindowCloseCallback $ do
         atomically $ modifyTVar (appStateTVar) (\x -> x {shutDown = True})
         return True
+
+    GLFW.setWindowSizeCallback $ \h w -> do
+        GL.viewport GL.$= (GL.Position 0 0, GL.Size (fromIntegral h) (fromIntegral w))
 
     GLFW.setMouseWheelCallback $ \mwv -> do
             when (mwv /= 0) $ do
